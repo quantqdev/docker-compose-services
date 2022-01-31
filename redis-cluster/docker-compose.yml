@@ -1,0 +1,13 @@
+version: '3'
+services:
+  redis-cluster:
+    image: grokzen/redis-cluster:5.0.5
+    container_name: redis_cluster
+    volumes:
+      - ./data/redis-cluster:/redis-data
+    ports:
+      - "7000:7000"
+      - "7001:7001"
+      - "7002:7002"
+    restart: always
+
