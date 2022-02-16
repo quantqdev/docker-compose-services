@@ -6,7 +6,6 @@
 version: '3'
 services:
   zookeeper:
-    restart: always
     image: confluentinc/cp-zookeeper:6.2.0
     container_name: zookeeper
     volumes:
@@ -17,7 +16,6 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   broker:
-    restart: always
     image: confluentinc/cp-kafka:6.2.0
     container_name: broker
     ports:
@@ -37,7 +35,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
   kafka-ui:
-    restart: always
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
     ports:

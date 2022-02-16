@@ -5,7 +5,6 @@ version: '3'
 services:
     mongodb1:
         image: mongo:4
-        restart: always
         container_name: mongodb1
         volumes:
         - ./data/mongodata1:/data/db
@@ -17,7 +16,6 @@ services:
 
     mongodb2:
         image: mongo:4
-        restart: always
         container_name: mongodb2
         volumes:
         - ./data/mongodata2:/data/db
@@ -27,7 +25,6 @@ services:
       
     mongodb3:
         image: mongo:4
-        restart: always
         container_name: mongodb3
         volumes:
         - ./data/mongodata3:/data/db
