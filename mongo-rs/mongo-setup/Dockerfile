@@ -1,4 +1,4 @@
-FROM mongo:4
+FROM mongo:5
 RUN mkdir /config
 WORKDIR /config
 COPY wait-for-it.sh .
