@@ -4,6 +4,9 @@ services:
     image: redis:alpine
     container_name: redis
     volumes:
-      - ./data/redis-data:/data
+      - redis-standalone-data:/data
     ports:
       - "6379:6379"
+volumes:
+  redis-standalone-data:
+    name: redis-standalone-data
