@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  cassandra:
+    container_name: cassandra-1
+    image: cassandra:4.1.3
+    ports:
+      - 9042:9042
+    networks:
+      - cassandra-net
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+volumes:
+  cassandra-data:
+    name: cassandra-data
+networks:
+  cassandra-net:
+    driver: bridge
+    name: cassandra-net
