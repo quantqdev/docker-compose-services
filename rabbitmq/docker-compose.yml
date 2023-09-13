@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   rabbitmq:
     hostname: rabbitmq
@@ -6,5 +6,7 @@ services:
     image: rabbitmq:3.8.0-management
     volumes:
       - ./data/rabbitmq:/var/lib/rabbitmq
+      - ./conf/enabled_plugins:/etc/rabbitmq/enabled_plugins
     ports:
       - "5672:5672"
+      - "15672:15672"
