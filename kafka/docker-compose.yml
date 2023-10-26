@@ -1,22 +1,22 @@
-# https://developer.confluent.io/quickstart/kafka-docker/
-# https://docs.confluent.io/platform/current/installation/docker/operations/external-volumes.html
-# https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui.yaml
+# Set PLAINTEXT://broker:9092 to kafka-ui can access
+# Add `127.0.0.1 broker` to /etc/hosts to access from outside of docker
+# May need `chmod -R a+w data` if use colima 0.5.6 on Mac OS
 
 ---
-version: '3'
+version: "3"
 services:
   zookeeper:
-    image: confluentinc/cp-zookeeper:6.2.0
+    image: confluentinc/cp-zookeeper:7.4.0
     container_name: zookeeper
     volumes:
-      - ./data/zk-data:/var/lib/zookeeper/data 
+      - ./data/zk-data:/var/lib/zookeeper/data
       - ./data/zk-txn-logs:/var/lib/zookeeper/log
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
   broker:
-    image: confluentinc/cp-kafka:6.2.0
+    image: confluentinc/cp-kafka:7.4.0
     container_name: broker
     ports:
       - "9092:9092"
@@ -27,24 +27,23 @@ services:
       - ./data/kafka-data:/var/lib/kafka/data
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,PLAINTEXT_INTERNAL://broker:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_JMX_PORT: 9997
 
   kafka-ui:
-    container_name: kafka-ui
+    container_name: kafka-ui-f
     image: provectuslabs/kafka-ui:latest
     ports:
-      - 9001:8080
+      - 9901:8080
     depends_on:
       - zookeeper
       - broker
     environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker:29092
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
-      KAFKA_CLUSTERS_0_JMXPORT: 9997
+      DYNAMIC_CONFIG_ENABLED: "true"
+    volumes:
+      - ../kafka-ui/data/config.yml:/etc/kafkaui/dynamic_config.yaml
