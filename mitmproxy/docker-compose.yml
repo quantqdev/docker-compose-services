@@ -1,0 +1,9 @@
+version: "3"
+services:
+  mitmproxy:
+    image: mitmproxy/mitmproxy
+    container_name: mitmproxy
+    entrypoint: "mitmweb --web-host 0.0.0.0"
+    ports:
+      - 9903:8080
+      - 9904:8081
