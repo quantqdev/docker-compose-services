@@ -6,6 +6,7 @@
 version: "3"
 services:
   zookeeper:
+    user: 0:0
     image: confluentinc/cp-zookeeper:7.4.0
     container_name: zookeeper
     volumes:
@@ -16,6 +17,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   broker:
+    user: 0:0
     image: confluentinc/cp-kafka:7.4.0
     container_name: broker
     ports:
