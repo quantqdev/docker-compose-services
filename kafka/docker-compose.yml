@@ -36,6 +36,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_JMX_PORT: 9997
+    entrypoint: sh -c 'sleep 30 && /etc/confluent/docker/run'
 
   kafka-ui:
     container_name: kafka-ui-f
