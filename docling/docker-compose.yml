@@ -1,0 +1,47 @@
+services:
+  docling-model-fetcher:
+    image: quay.io/docling-project/docling-serve:latest
+    container_name: docling-model-fetcher-local
+    environment:
+      - DOCLING_MODELS=${DOCLING_MODELS}
+    entrypoint:
+      [
+        "sh",
+        "-c",
+        "docling-tools models download $${DOCLING_MODELS:- --all} -o /opt/app-root/src/models",
+      ]
+    volumes:
+      - ${DOCLING_MODELS_CACHE:-./models}:/opt/app-root/src/models
+
+  docling-serve:
+    image: quay.io/docling-project/docling-serve:latest
+    container_name: docling-serve-local
+    shm_size: "4g" # Now needs large SHM as it handles processing directly
+    environment:
+      - DOCLING_SERVE_ENG_KIND=local
+      - DOCLING_SERVE_ENG_LOC_NUM_WORKERS=4 # Number of shared-model threads
+      - DOCLING_SERVE_ENG_LOC_SHARE_MODELS=True # Explicitly share models among threads
+      - UVICORN_WORKERS=1 # Best to keep at 1 for local engine to share 1 model instance
+      - DOCLING_SERVE_ENABLE_UI=1
+      - DOCLING_SERVE_LOAD_MODELS_AT_BOOT=True
+      - DOCLING_SERVE_ARTIFACTS_PATH=/opt/app-root/src/models
+      # Optimization settings
+      - DOCLING_NUM_THREADS=4
+      - DOCLING_PERF_PAGE_BATCH_SIZE=8
+      - DOCLING_SERVE_OCR_BATCH_SIZE=4
+    volumes:
+      - ${DOCLING_MODELS_CACHE:-./models}:/opt/app-root/src/models
+    ports:
+      - "${DOCLING_PORT:-5001}:5001"
+    depends_on:
+      docling-model-fetcher:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        limits:
+          memory: 12G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
